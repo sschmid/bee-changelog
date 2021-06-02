@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2021-6-02
+- Add `CHANGELOG_TAG_PREFIX`
+- Add `CHANGELOG_TAG_SUFFIX`
+
 ## [2.0.0] - 2021-04-14
 - Insert changes into existing changelog
 - Insert release link
