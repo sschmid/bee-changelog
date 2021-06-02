@@ -4,7 +4,9 @@ changelog::_new() {
   echo "# changelog => $(changelog::_deps)"
   echo 'CHANGELOG_PATH=CHANGELOG.md
 CHANGELOG_CHANGES=CHANGES.md
-CHANGELOG_URL=https://github.com/sschmid/bee-changelog'
+CHANGELOG_URL=https://github.com/sschmid/bee-changelog
+CHANGELOG_TAG_PREFIX=""
+CHANGELOG_TAG_SUFFIX=""'
 }
 
 changelog::_deps() {
@@ -13,7 +15,8 @@ changelog::_deps() {
 
 changelog::merge() {
   assert_file CHANGELOG_CHANGES
-  local insert_changes_pattern="## \[Unreleased\]" insert_link_pattern="\[Unreleased\]:" tmp_changes="${CHANGELOG_CHANGES}.tmp" tmp_link="link.tmp" prev_version version
+  local insert_changes_pattern="## \[Unreleased\]" insert_link_pattern="\[Unreleased\]:"
+  local tmp_changes="${CHANGELOG_CHANGES}.tmp" tmp_link="link.tmp" prev_version version
   prev_version=$(grep --color=never "\[Unreleased\]:" CHANGELOG.md | grep -o -E --color=never "\d+\.\d+\.\d+")
   version="$(version::read)"
 
@@ -24,8 +27,8 @@ changelog::merge() {
   } > "${tmp_changes}"
 
   {
-    echo "[Unreleased]: ${CHANGELOG_URL}/compare/${version}...HEAD"
-    echo "[${version}]: ${CHANGELOG_URL}/compare/${prev_version}...${version}"
+    echo "[Unreleased]: ${CHANGELOG_URL}/compare/${CHANGELOG_TAG_PREFIX}${version}${CHANGELOG_TAG_SUFFIX}...HEAD"
+    echo "[${version}]: ${CHANGELOG_URL}/compare/${CHANGELOG_TAG_PREFIX}${prev_version}${CHANGELOG_TAG_SUFFIX}...${CHANGELOG_TAG_PREFIX}${version}${CHANGELOG_TAG_SUFFIX}"
   } > "${tmp_link}"
 
   sed -i .bak \
