@@ -35,7 +35,7 @@ changelog::merge() {
     -e "/${insert_changes_pattern}/r ${tmp_changes}" \
     -e "/${insert_link_pattern}.*/r ${tmp_link}" \
     -e "/${insert_link_pattern}/d" \
-    ${CHANGELOG_PATH}
+    "${CHANGELOG_PATH}"
 
   rm "${CHANGELOG_PATH}.bak" "${tmp_changes}" "${tmp_link}"
 }
