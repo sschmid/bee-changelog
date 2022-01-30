@@ -39,8 +39,8 @@ EOF
 
 _setup_version() {
   export test_version="$1"
-  version::read() { echo "${test_version}"; }
-  export -f version::read
+  semver::read() { echo "${test_version}"; }
+  export -f semver::read
   date() { echo "2021-12-13"; }
   export -f date
   export CHANGELOG_URL=https://github.com/sschmid/bee-changelog

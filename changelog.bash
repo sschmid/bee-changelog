@@ -1,21 +1,23 @@
-changelog::help() {
-  echo "# changelog => $(changelog::deps | xargs) - https://github.com/sschmid/bee-changelog"
-  cat << 'EOF'
-CHANGELOG_PATH=CHANGELOG.md # default
-CHANGELOG_CHANGES=CHANGES.md # default
-CHANGELOG_URL=https://github.com/sschmid/bee-changelog
-CHANGELOG_TAG_PREFIX="" # default
-CHANGELOG_TAG_SUFFIX="" # default
-EOF
-}
-
 : "${CHANGELOG_PATH:=CHANGELOG.md}"
 : "${CHANGELOG_CHANGES:=CHANGES.md}"
 : "${CHANGELOG_TAG_PREFIX:=""}"
 : "${CHANGELOG_TAG_SUFFIX:=""}"
 
-changelog::deps() {
-  echo "version"
+changelog::help() {
+  cat << 'EOF'
+template:
+
+  CHANGELOG_PATH=CHANGELOG.md # default
+  CHANGELOG_CHANGES=CHANGES.md # default
+  CHANGELOG_URL=https://github.com/sschmid/bee-changelog
+  CHANGELOG_TAG_PREFIX="" # default
+  CHANGELOG_TAG_SUFFIX="" # default
+
+usage:
+
+  merge   Merge the current version and timestamp as well as the
+          content of the file CHANGELOG_CHANGES into CHANGELOG_PATH
+EOF
 }
 
 changelog::merge() {
@@ -27,7 +29,7 @@ changelog::merge() {
   local insert_changes_pattern="## \[Unreleased\]" insert_link_pattern="\[Unreleased\]:"
   local tmp_changes="${CHANGELOG_CHANGES}.tmp" tmp_link="link.tmp" prev_version version
   prev_version=$(grep --color=never "\[Unreleased\]:" "${CHANGELOG_PATH}" | grep -o -E --color=never "\d+\.\d+\.\d+")
-  version="$(version::read)"
+  version="$(semver::read)"
 
   cat << EOF > "${tmp_changes}"
 

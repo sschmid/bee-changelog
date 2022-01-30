@@ -1,0 +1,7 @@
+{
+  "homepage": "https://github.com/sschmid/bee-changelog",
+  "info": "Merge changes into changelog (see https://keepachangelog.com)",
+  "dependencies": [
+    "semver"
+  ]
+}
