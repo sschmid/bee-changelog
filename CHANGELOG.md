@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2022-06-01
+### Added
+- Add `changelog::release`
+
 ## [3.0.0] - 2022-01-30
 ### Added
 - Add tests
@@ -28,7 +32,8 @@ like the official beehub: https://github.com/sschmid/beehub
 This is the initial version that contains all changes up to bee-0.39.0.
 The code has been refactored and updated to follow the bee conventions.
 
-[Unreleased]: https://github.com/sschmid/bee-changelog/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/sschmid/bee-changelog/compare/3.1.0...HEAD
+[3.1.0]: https://github.com/sschmid/bee-changelog/compare/3.0.0...3.1.0
 [3.0.0]: https://github.com/sschmid/bee-changelog/compare/2.1.0...3.0.0
 [2.1.0]: https://github.com/sschmid/bee-changelog/compare/2.0.0...2.1.0
 [2.0.0]: https://github.com/sschmid/bee-changelog/compare/1.0.0...2.0.0

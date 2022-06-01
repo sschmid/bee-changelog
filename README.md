@@ -14,6 +14,8 @@ template:
 
 usage:
 
-  merge   Merge the current version and timestamp as well as the
-          content of the file CHANGELOG_CHANGES into CHANGELOG_PATH
+  merge     Merge the current version and timestamp as well as the
+            content of the file CHANGELOG_CHANGES into CHANGELOG_PATH
+  release   Create a new release with the current version and timestamp
+            as well as the content of [Unreleased] in CHANGELOG_PATH
 ```
