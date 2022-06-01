@@ -3,6 +3,11 @@
 : "${CHANGELOG_TAG_PREFIX:=""}"
 : "${CHANGELOG_TAG_SUFFIX:=""}"
 
+CHANGELOG_INSERT_CHANGES_PATTERN="## \[Unreleased\]"
+CHANGELOG_INSERT_LINK_PATTERN="\[Unreleased\]:"
+CHANGELOG_TMP_CHANGES="${CHANGELOG_CHANGES}.tmp"
+CHANGELOG_TMP_LINK="link.tmp"
+
 changelog::help() {
   cat << 'EOF'
 template:
@@ -15,8 +20,10 @@ template:
 
 usage:
 
-  merge   Merge the current version and timestamp as well as the
-          content of the file CHANGELOG_CHANGES into CHANGELOG_PATH
+  merge     Merge the current version and timestamp as well as the
+            content of the file CHANGELOG_CHANGES into CHANGELOG_PATH
+  release   Create a new release with the current version and timestamp
+            as well as the content of [Unreleased] in CHANGELOG_PATH
 EOF
 }
 
@@ -26,27 +33,39 @@ changelog::merge() {
     exit 1
   fi
 
-  local insert_changes_pattern="## \[Unreleased\]" insert_link_pattern="\[Unreleased\]:"
-  local tmp_changes="${CHANGELOG_CHANGES}.tmp" tmp_link="link.tmp" prev_version version
-  prev_version=$(grep --color=never "\[Unreleased\]:" "${CHANGELOG_PATH}" | grep -o -E --color=never "\d+\.\d+\.\d+")
-  version="$(semver::read)"
+  cat << EOF > "${CHANGELOG_TMP_CHANGES}"
 
-  cat << EOF > "${tmp_changes}"
-
-## [${version}] - $(date +%Y-%m-%d)
+## [$(semver::read)] - $(date +%Y-%m-%d)
 $(< "${CHANGELOG_CHANGES}")
 EOF
 
-  cat << EOF > "${tmp_link}"
+  _insert_changes
+}
+
+changelog::release() {
+  cat << EOF > "${CHANGELOG_TMP_CHANGES}"
+
+## [$(semver::read)] - $(date +%Y-%m-%d)
+EOF
+
+  _insert_changes
+}
+
+_insert_changes() {
+  local prev_version version
+  prev_version=$(grep --color=never "\[Unreleased\]:" "${CHANGELOG_PATH}" | grep -o -E --color=never "\d+\.\d+\.\d+")
+  version="$(semver::read)"
+
+  cat << EOF > "${CHANGELOG_TMP_LINK}"
 [Unreleased]: ${CHANGELOG_URL}/compare/${CHANGELOG_TAG_PREFIX}${version}${CHANGELOG_TAG_SUFFIX}...HEAD
 [${version}]: ${CHANGELOG_URL}/compare/${CHANGELOG_TAG_PREFIX}${prev_version}${CHANGELOG_TAG_SUFFIX}...${CHANGELOG_TAG_PREFIX}${version}${CHANGELOG_TAG_SUFFIX}
 EOF
 
   sed -i .bak \
-    -e "/${insert_changes_pattern}/r ${tmp_changes}" \
-    -e "/${insert_link_pattern}.*/r ${tmp_link}" \
-    -e "/${insert_link_pattern}/d" \
+    -e "/${CHANGELOG_INSERT_CHANGES_PATTERN}/r ${CHANGELOG_TMP_CHANGES}" \
+    -e "/${CHANGELOG_INSERT_LINK_PATTERN}.*/r ${CHANGELOG_TMP_LINK}" \
+    -e "/${CHANGELOG_INSERT_LINK_PATTERN}/d" \
     "${CHANGELOG_PATH}"
 
-  rm "${CHANGELOG_PATH}.bak" "${tmp_changes}" "${tmp_link}"
+  rm "${CHANGELOG_PATH}.bak" "${CHANGELOG_TMP_CHANGES}" "${CHANGELOG_TMP_LINK}"
 }

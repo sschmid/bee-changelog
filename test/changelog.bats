@@ -37,6 +37,30 @@ Test
 EOF
 }
 
+_setup_changelog_with_unreleased_changes() {
+  export CHANGELOG_PATH="${BATS_TEST_TMPDIR}/CHANGELOG.md"
+  cat << 'EOF' > "${CHANGELOG_PATH}"
+# Changelog
+Test
+
+## [Unreleased]
+### Added
+- Tests 3
+
+## [1.2.3] - 2021-12-13
+### Added
+- Tests 2
+
+## [1.0.0] - 2021-12-13
+### Added
+- Tests 1
+
+[Unreleased]: https://github.com/sschmid/bee-changelog/compare/1.2.3...HEAD
+[1.2.3]: https://github.com/sschmid/bee-changelog/compare/1.0.0...1.2.3
+[1.0.0]: https://github.com/sschmid/bee-changelog/releases/tag/1.0.0
+EOF
+}
+
 _setup_version() {
   export test_version="$1"
   semver::read() { echo "${test_version}"; }
@@ -158,6 +182,37 @@ Test
 
 [Unreleased]: https://github.com/sschmid/bee-changelog/compare/2.0.0-changelog...HEAD
 [2.0.0]: https://github.com/sschmid/bee-changelog/compare/1.2.3-changelog...2.0.0-changelog
+[1.2.3]: https://github.com/sschmid/bee-changelog/compare/1.0.0...1.2.3
+[1.0.0]: https://github.com/sschmid/bee-changelog/releases/tag/1.0.0
+EOF
+}
+
+@test "creates release" {
+  _setup_changelog_with_unreleased_changes
+  _setup_version 2.0.0
+  _changelog changelog::release
+  assert_success
+  run cat "${CHANGELOG_PATH}"
+  cat << EOF | assert_output -
+# Changelog
+Test
+
+## [Unreleased]
+
+## [2.0.0] - 2021-12-13
+### Added
+- Tests 3
+
+## [1.2.3] - 2021-12-13
+### Added
+- Tests 2
+
+## [1.0.0] - 2021-12-13
+### Added
+- Tests 1
+
+[Unreleased]: https://github.com/sschmid/bee-changelog/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/sschmid/bee-changelog/compare/1.2.3...2.0.0
 [1.2.3]: https://github.com/sschmid/bee-changelog/compare/1.0.0...1.2.3
 [1.0.0]: https://github.com/sschmid/bee-changelog/releases/tag/1.0.0
 EOF
